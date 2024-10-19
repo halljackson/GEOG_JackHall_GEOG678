@@ -1,8 +1,10 @@
-# GEOG_JackHall_GEOG678
+# GEOG 678 - WebGIS
+## Jack Hall 
+## Fall 2024
 This repository is for GEOG678 submissions.
 
 
-Table:-
+### Table of Contents
 | Homeworks | Labs | Project |
 | :-----------: |:----------:| :-----:|
 |[week01](homework/week01/README.md)|[week01](lab/week01/README.md)||
