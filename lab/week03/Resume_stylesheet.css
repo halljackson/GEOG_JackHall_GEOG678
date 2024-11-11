@@ -1,0 +1,85 @@
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin-left: 60px;
+    margin-right: 60px;
+    margin-bottom: 200px;
+    padding: 0;
+    background-color: #ffffff;
+}
+
+.name {
+
+    font-weight: 750;
+    font-size: 65px
+}
+
+.contact-info {
+    text-align: center;
+}
+
+h1 {
+    font-size: 40px;
+}
+
+.heading {
+    font-weight: 700;
+    font-size: 30px;
+    text-align: center;
+    background-image: url('BigBend.jpg');
+    
+    
+}
+
+.schools {
+    font-weight: 700
+
+}
+
+.jobs {
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+background-color:blueviolet;
+opacity: 0.5;
+font-size: 80px;
+}
+
+.other-jobs {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+background-color:rgb(211, 199, 144);
+opacity: 0.5;
+font-size: 80px;
+}
+
+.degree {
+    font-style: italic; 
+    font-weight: 100; 
+}
+
+.right {
+    text-align: right;
+}
+
+
+span {
+   color:#f4f4f4 
+}
+
+
+.introduction {
+    background-image: url('BigBend.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 1;
+    text-align: center;    
+}
+
+div .introduction{
+    margin: 0px ;
+}
+
+.supplementary {
+    font-weight: 100;
+    font-style:italic;
+}
