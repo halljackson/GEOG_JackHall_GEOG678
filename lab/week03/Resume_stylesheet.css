@@ -3,21 +3,24 @@
 
 body {
     font-family: Arial, sans-serif;
-    margin-left: 60px;
-    margin-right: 60px;
+    margin-left: 225px;
+    margin-right: 250px;
     margin-bottom: 200px;
     padding: 0;
     background-color: #ffffff;
+  
 }
 
 .name {
 
     font-weight: 750;
-    font-size: 65px
+    font-size: 65px;
+    color: rgb(48, 46, 46);
 }
 
 .contact-info {
     text-align: center;
+    color: rgb(29, 29, 29);
 }
 
 h1 {
@@ -29,6 +32,7 @@ h1 {
     font-size: 30px;
     text-align: center;
     background-image: url('BigBend.jpg');
+
     
     
 }
@@ -68,7 +72,7 @@ span {
 
 
 .introduction {
-    background-image: url('BigBend.jpg');
+    background-color:rgba(135, 166, 206, 0.356);
     background-size: cover;
     background-repeat: no-repeat;
     opacity: 1;
