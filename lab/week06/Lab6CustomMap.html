@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jack Hall TAMU Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" crossorigin=""></script>
+
+    <style>
+        #mapid {
+            height: 600px;
+            width: 800px;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+            }
+    </style>
+</head>
+<body>
+    <div id="mapid"></div>
+
+    <script>
+        var map = L.map('mapid').setView([30.610806, -96.350527], 14);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+    </script>
+
+    <script src="tamubuildings.js"></script>
+
+    <script>
+        var defaultStyle = {
+            color: "maroon",
+            weight: 1,
+            fillOpacity: 0.2
+        };
+
+        function highlightFeature(e) {
+            var layer = e.target;
+            layer.setStyle({
+                weight: 3,
+                color: 'blue',
+                dashArray: '',
+                fillOpacity: 0
+            });
+            layer.bringToFront();
+
+            info.update(layer.feature.properties);
+        }
+
+        function resetHighlight(e) {
+            geojson.resetStyle(e.target);
+
+            info.update();
+        }
+
+        function zoomToFeature(e) {
+            map.fitBounds(e.target.getBounds());
+        }
+
+        function onEachFeature(feature, layer) {
+            layer.on({
+                mouseover: highlightFeature,
+                mouseout: resetHighlight,
+                click: zoomToFeature
+            });
+
+            if (feature.properties && feature.properties.BldgName) {
+                layer.bindPopup(feature.properties.BldgName);
+            }
+        }
+
+        var geojson = L.geoJSON(tamubuildings, {
+            style: defaultStyle,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+
+        var info = L.control();
+
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); 
+            this.update();
+            return this._div;
+        };
+
+        info.update = function (props) {
+            this._div.innerHTML = '<h4>Texas A&M University Buildings</h4>' + 
+                (props ? `<b>${props.BldgName}</b>` : 'Hover over a building');
+        };
+
+        info.addTo(map);
+    </script>
+</body>
+</html>
