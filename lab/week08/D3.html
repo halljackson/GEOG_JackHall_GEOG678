@@ -1,175 +1,183 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Lab 08 - D3</title>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <style>
-      .line {
-        fill: none;
-        stroke-width: 2px;
-      }
-
-      .highest {
-        stroke: red;
-      }
-
-      .lowest {
-        stroke: blue;
-      }
-
-      .axis text {
-        font: 10px sans-serif;
-      }
-
-      .axis path,
-      .axis line {
-        fill: none;
-        shape-rendering: crispEdges;
-      }
-
-      .chart-title {
-        text-anchor: middle;
-        font-size: 16px;
-        font-weight: bold;
-      }
-
-      .y-axis-title {
-        text-anchor: middle;
-        font-size: 12px;
-        font-weight: bold;
-      }
-
-      .diamond-high {
-        fill: red;
-        stroke: none;
-      }
-
-      .diamond-low {
-        fill: blue;
-        stroke: none;
-      }
-
-    </style>
-  </head>
-  <body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Temperature Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1 style="text-align: left;">Weekly Temperature Forecast in College Station</h1>
     <script>
-      const data = [
-        { day: "Sat1", label: "Sat", highest: 82, lowest: 67 },
-        { day: "Sun", label: "Sun", highest: 81, lowest: 59 },
-        { day: "Mon", label: "Mon", highest: 81, lowest: 50 },
-        { day: "Tue", label: "Tue", highest: 70, lowest: 47 },
-        { day: "Wed", label: "Wed", highest: 77, lowest: 51 },
-        { day: "Thu", label: "Thu", highest: 78, lowest: 60 },
-        { day: "Fri", label: "Fri", highest: 79, lowest: 66 },
-        { day: "Sat2", label: "Sat", highest: 80, lowest: 66 },
-      ];
 
-      const margin = { top: 50, right: 30, bottom: 50, left: 60 };
-      const width = 600 - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
+        const temperatureData = [
+            { day: "Sat", high: 82, low: 67 },
+            { day: "Sun", high: 81, low: 59 },
+            { day: "Mon", high: 81, low: 50 },
+            { day: "Tue", high: 70, low: 47 },
+            { day: "Wed", high: 77, low: 51 },
+            { day: "Thu", high: 78, low: 60 },
+            { day: "Fri", high: 79, low: 66 },
+            { day: "Sat2", high: 80, low: 66 },
+        ];
 
-      const svg = d3
-        .select("body")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        const width = 928;
+        const height = 500;
+        const marginTop = 20;
+        const marginRight = 30;
+        const marginBottom = 30;
+        const marginLeft = 60;
 
-      const x = d3
-        .scalePoint()
-        .domain(data.map((d) => d.day))
-        .range([0, width]);
 
-      const y = d3
-        .scaleLinear()
-        .domain([
-          d3.min(data, (d) => d.lowest) - 5,
-          d3.max(data, (d) => d.highest) + 5,
-        ])
-        .range([height, 0]);
+        const x = d3.scalePoint()
+            .domain(temperatureData.map(d => d.day))
+            .range([marginLeft, width - marginRight]);
 
-      const xAxis = d3.axisBottom(x).tickFormat((d) => {
-        const entry = data.find((item) => item.day === d);
-        return entry ? entry.label : d;
-      });
+        const y = d3.scaleLinear()
+            .domain([40, d3.max(temperatureData, d => d.high)])
+            .nice()
+            .range([height - marginBottom, marginTop]);
 
-      const yAxis = d3.axisLeft(y);
 
-      svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(xAxis);
+        const svg = d3.create("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height])
+            .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-      svg.append("g").call(yAxis);
 
-      svg
-        .append("text")
-        .attr("class", "y-axis-title")
-        .attr("x", -height / 2)
-        .attr("y", -margin.left + 15)
-        .attr("transform", "rotate(-90)")
-        .text("Temperature (°F)");
+        svg.append("g")
+            .attr("transform", `translate(0,${height - marginBottom})`)
+            .call(d3.axisBottom(x))
+            .call(g => g.selectAll("text")
+                .attr("transform", "rotate(-45)")
+                .style("text-anchor", "end"));
 
-      const lineHighest = d3
-        .line()
-        .x((d) => x(d.day))
-        .y((d) => y(d.highest));
 
-      const lineLowest = d3
-        .line()
-        .x((d) => x(d.day))
-        .y((d) => y(d.lowest));
+        svg.append("g")
+            .attr("transform", `translate(${marginLeft},0)`)
+            .call(d3.axisLeft(y))
+            .call(g => g.select(".domain").remove())
+            .call(g => g.selectAll(".tick line").clone()
+                .attr("x2", width - marginLeft - marginRight)
+                .attr("stroke-opacity", 0.1))
+            .call(g => g.append("text")
+                .attr("x", -marginLeft + 10)
+                .attr("y", (height - marginBottom + marginTop) / 2)
+                .attr("fill", "currentColor")
+                .attr("text-anchor", "middle")
+                .attr("transform", `rotate(-90, ${-marginLeft + 10}, ${(height - marginBottom + marginTop) / 2})`)
+                .text("Temperatures (°F)"));
 
-      svg
-        .append("path")
-        .datum(data)
-        .attr("class", "line highest")
-        .attr("d", lineHighest);
+        svg.append("line")
+            .attr("x1", marginLeft)
+            .attr("x2", marginLeft)
+            .attr("y1", marginTop)
+            .attr("y2", height - marginBottom)
+            .attr("stroke", "black");
 
-      svg
-        .append("path")
-        .datum(data)
-        .attr("class", "line lowest")
-        .attr("d", lineLowest);
+        svg.append("line")
+            .attr("x1", marginLeft)
+            .attr("x2", width - marginRight)
+            .attr("y1", height - marginBottom)
+            .attr("y2", height - marginBottom)
+            .attr("stroke", "black");
 
-      svg
-        .append("text")
-        .attr("x", width / 2)
-        .attr("y", -margin.top / 2)
-        .attr("class", "chart-title")
-        .text("Weekly Temperature Forecast in College Station");
+        const lineGenerator = d3.line()
+            .x(d => x(d.day))
+            .y(d => y(d.high));
 
-      svg
-        .append("text")
-        .attr("x", width - 100)
-        .attr("y", height - 120)
-        .attr("fill", "red")
-        .text("Highest (°F)");
 
-      svg
-        .append("text")
-        .attr("x", width - 100)
-        .attr("y", height - 100)
-        .attr("fill", "blue")
-        .text("Lowest (°F)");
+        svg.append("path")
+            .datum(temperatureData)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(d => x(d.day))
+                .y(d => y(d.high)));
 
-      svg
-        .selectAll(".diamond-high")
-        .data(data)
-        .enter()
-        .append("path")
-        .attr("class", "diamond")
-        .attr("d", d3.symbol().type(d3.symbolDiamond).size(64))
-        .attr("transform", (d) => `translate(${x(d.day)},${y(d.highest)})`);
+        svg.append("path")
+            .datum(temperatureData)
+            .attr("fill", "none")
+            .attr("stroke", "orange")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(d => x(d.day))
+                .y(d => y(d.low)));
 
-      svg
-        .selectAll(".diamond-low")
-        .data(data)
-        .enter()
-        .append("path")
-        .attr("class", "diamond")
-        .attr("d", d3.symbol().type(d3.symbolDiamond).size(64))
-        .attr("transform", (d) => `translate(${x(d.day)},${y(d.lowest)})`);
+
+        svg.append("g")
+            .selectAll("circle")
+            .data(temperatureData)
+            .join("circle")
+            .attr("cx", d => x(d.day))
+            .attr("cy", d => y(d.high))
+            .attr("r", 4)
+            .attr("fill", "steelblue");
+
+        svg.append("g")
+            .selectAll("text.high-label")
+            .data(temperatureData)
+            .join("text")
+            .attr("class", "high-label")
+            .attr("x", d => x(d.day))
+            .attr("y", d => y(d.high) - 8)
+            .attr("text-anchor", "middle")
+            .attr("fill", "steelblue")
+            .text(d => `${d.high}°F`);
+
+
+        svg.append("g")
+            .selectAll("circle")
+            .data(temperatureData)
+            .join("circle")
+            .attr("cx", d => x(d.day))
+            .attr("cy", d => y(d.low))
+            .attr("r", 4)
+            .attr("fill", "orange");
+
+        svg.append("g")
+            .selectAll("text.low-label")
+            .data(temperatureData)
+            .join("text")
+            .attr("class", "low-label")
+            .attr("x", d => x(d.day))
+            .attr("y", d => y(d.low) + 15)
+            .attr("text-anchor", "middle")
+            .attr("fill", "orange")
+            .text(d => `${d.low}°F`);
+
+
+        const legend = svg.append("g")
+            .attr("transform", `translate(${width - marginRight - 100},${marginTop})`);
+
+        legend.append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 10)
+            .attr("height", 10)
+            .attr("fill", "steelblue");
+
+        legend.append("text")
+            .attr("x", 15)
+            .attr("y", 10)
+            .text("Highest");
+
+        legend.append("rect")
+            .attr("x", 0)
+            .attr("y", 20)
+            .attr("width", 10)
+            .attr("height", 10)
+            .attr("fill", "orange");
+
+        legend.append("text")
+            .attr("x", 15)
+            .attr("y", 30)
+            .text("Lowest");
+
+
+        document.body.appendChild(svg.node());
     </script>
-  </body>
+</body>
 </html>
